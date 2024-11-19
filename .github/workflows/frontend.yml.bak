@@ -1,0 +1,61 @@
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: Test Frontend
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  pull-requests: read # allows SonarQube to decorate PRs with analysis results
+
+jobs:
+  Analysis:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:4.4
+        ports:
+          - 27017:27017
+          
+    permissions: write-all
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+
+      # Install backend dependencies
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: ./backend
+
+      # Start the backend
+      - name: Start Backend
+        run: npm start &
+        working-directory: ./backend
+
+      # Wait for the backend to be ready
+      - name: Wait for Backend
+        run: |
+          echo "Waiting for backend to be ready..."
+          until curl -s http://localhost:3000 > /dev/null; do
+            sleep 5
+          done
+        shell: bash
+
+      # Install frontend dependencies
+      - name: Install Frontend Dependencies
+        run: npm install
+        working-directory: ./frontend
+        
+      # Test
+      - name: Start
+        run: npm test
+        working-directory: ./frontend

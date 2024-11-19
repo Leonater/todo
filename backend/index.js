@@ -101,6 +101,16 @@ const todoValidationRules = [
         .withMessage('Titel darf nicht leer sein')
         .isLength({ min: 3 })
         .withMessage('Titel muss mindestens 3 Zeichen lang sein'),
+    check('due')
+        .notEmpty()
+        .withMessage('Fälligkeitsdatum darf nicht leer sein')
+        .isISO8601()
+        .withMessage('Fälligkeitsdatum muss ein gültiges Datum sein'),
+    check('status')
+        .notEmpty()
+        .withMessage('Status darf nicht leer sein')
+        .isInt({ min: 0, max: 2 })
+        .withMessage('Status muss zwischen 0 und 2 liegen'),
 ];
 
 
@@ -108,7 +118,10 @@ const todoValidationRules = [
  * This middleware could be used to implement JWT-based authentication. Currently, this is only a stub.
 */
 let authenticate = (req, res, next) => {
-    // Dummy authentication
+    let token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
     next();
 }
 
@@ -242,7 +255,8 @@ app.put('/todos/:id', authenticate,
                 console.log("error updating todo: %s, %o, %j", id, todo, err);
                 res.sendStatus(500);
             })
-    });
+    }
+);
 
 /** Create a new todo.
  * @swagger
@@ -269,8 +283,12 @@ app.put('/todos/:id', authenticate,
  *     '500':
  *       description: Serverfehler
  */
-app.post('/todos', authenticate,
+app.post('/todos', authenticate, todoValidationRules,
     async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
         let todo = req.body;
         if (!todo) {
             res.sendStatus(400, { message: "Todo fehlt" });

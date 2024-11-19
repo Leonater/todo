@@ -1,0 +1,47 @@
+name: Test Backend and Frontend
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Test Backend and Frontend
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+    steps:
+      # Test backend
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+  
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./backend
+  
+      - name: Run Backend Tests
+        run: npm test
+        working-directory: ./backend
+
+      # Test frontend
+      - name: Start Backend
+        run: npm start &
+        working-directory: ./backend
+        
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Run Cypress tests
+        run: npm test
+        working-directory: ./frontend

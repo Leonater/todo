@@ -57,7 +57,8 @@ export default class DB {
                 }
                 else {
                     console.log('Error updating todo: %o, %s', result, id);
-                    throw new Error('Error updating todo');
+                    // throw new Error('Error updating todo');
+                    return null;
                 }
             })
             .catch(err => {

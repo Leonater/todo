@@ -1,0 +1,13 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cypress.config.js",
+  "scripts": {
+    "test": "npx cypress run --headless"
+  },
+  "type": "module",
+  "dependencies": {
+    "cypress": "^13.15.2"
+  }
+}
