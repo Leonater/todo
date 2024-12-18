@@ -17,7 +17,7 @@
     <form class="new-todo" id="todo-form" action="https://jupiter.fh-swf.de/echo" method="post"
         onsubmit="saveTodo(event)" onreset="initForm(event)">
 
-        <label for="todo">Aufgabe</label><input type="text" name="title" id="todo" placeholder="Neue Aufgabe">
+        <label for="todo">Aufgabe</label><input type="text" name="title" id="todo" placeholder="Neue Aufgabe" required>
         <label for="due">Zu erledigen bis</label><input type="date" name="due" id="due">
         <label for="status">Status</label><select name="status" id="status">
             <option value="0">offen</option>

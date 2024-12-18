@@ -1,4 +1,4 @@
-name: Test Backend and Frontend
+name: Test and SonarQube analysis
 
 on:
   push:
@@ -10,42 +10,68 @@ on:
   workflow_dispatch:
 
 jobs:
-  tests:
-    name: Test and SonarQube analysis
+  Backend-Test:
     runs-on: ubuntu-latest
     services:
       mongodb:
         image: mongo:6.0
         ports:
           - 27017:27017
+    defaults:
+      run:
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
   
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: ./backend
+  
+      - name: Run Backend Tests
+        run: npm test
+        working-directory: ./backend
+
+  Frontend-Test:
+    needs: Backend-Test
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+    defaults:
+      run:
+        working-directory: ./frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Install backend dependencies
         run: npm install
         working-directory: ./backend
 
       - name: Install frontend dependencies
         run: npm install
-        working-directory: ./frontend
-  
-      - name: Run Backend Tests
-        run: npm test
-        working-directory: ./backend
-
+      
       - name: Start Backend
         run: npm start &
         working-directory: ./backend
       
       - name: Run Cypress tests
         run: npm test
-        working-directory: ./frontend
+
+  SonarQube-Analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Run SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args:
+            -Dsonar.projectKey=ls_kk_jb_todo

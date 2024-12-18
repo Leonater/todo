@@ -72,7 +72,8 @@ export default class DB {
      * @returns {Promise} - Promise with deleted todo
      */
     delete(id) {
-        let _id = new ObjectId(id);
+        const _id = new ObjectId(id);
+        console.log('Deleting todo: %s', _id);
         return collection.findOneAndDelete({ _id })
             .then(result => {
                 if (result.ok) {

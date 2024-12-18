@@ -4,6 +4,8 @@ let todos = [];
 const status = ["offen", "in Bearbeitung", "erledigt"];
 
 const API = "/todos"
+// const LOGIN_URL = ""
+const TOKEN = "" // dummy token
 
 function createTodoElement(todo) {
     let list = document.getElementById("todo-list");
@@ -13,9 +15,9 @@ function createTodoElement(todo) {
            <div class="title">${todo.title}</div> 
            <div class="due">${due.toLocaleDateString()}</div>
            <div class="actions">
-              <button class="status" onclick="changeStatus(${todo._id})">${status[todo.status || 0]}</button>
-              <button class="edit" onclick="editTodo(${todo._id})">Bearbeiten</button>
-              <button class="delete" onclick="deleteTodo(${todo._id})">Löschen</button>
+              <button class="status" onclick="changeStatus('${todo._id}')">${status[todo.status || 0]}</button>
+              <button class="edit" onclick="editTodo('${todo._id}')">Bearbeiten</button>
+              <button class="delete" onclick="deleteTodo('${todo._id}')">Löschen</button>
            </div>
          </div>`);
 
@@ -63,7 +65,7 @@ function saveTodo(evt) {
     evt.preventDefault();
 
     // Get the id from the form. If it is not set, we are creating a new todo.
-    let _id = Number.parseInt(evt.target.dataset.id) || Date.now();
+    let _id = Number.parseInt(evt.target.dataset.id) || undefined;
 
     let todo = {
         _id,
@@ -79,7 +81,8 @@ function saveTodo(evt) {
         fetch(API + "/" + _id, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${TOKEN}`
             },
             body: JSON.stringify(todo)
         })
@@ -96,7 +99,8 @@ function saveTodo(evt) {
         fetch(API, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${TOKEN}`
             },
             body: JSON.stringify(todo)
         })
@@ -128,21 +132,25 @@ function editTodo(id) {
 function deleteTodo(id) {
     let todo = todos.find(t => t._id === id);
     console.log("Deleting todo: %o", todo);
-    if (todo) {
-        todos = todos.filter(t => t._id !== id);
-        fetch(API + "/" + id, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            }
+    fetch(API + "/" + id, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${TOKEN}`
+        }
+    })
+        .then(response => {
+            console.log("DELETE %s: %o", API + "/" + id, response)
+            if (response.status != 204) throw ("DELETE failed")
         })
-            .then(checkLogin)
-            .then(response => {
-                console.log("DELETE %s: %o", API + "/" + id, response)
-                showTodos()
-                return todos
-            })
-    }
+        .then(response => {
+            todos = todos.filter(t => t._id !== id)
+            console.log("Deleted todo: %o", response)
+            showTodos();
+        })
+        .catch(err => {
+            console.log("DELETE %s failed: %o", API + "/" + id, err)
+        })
 }
 
 function changeStatus(id) {
@@ -153,7 +161,8 @@ function changeStatus(id) {
         fetch(API + "/" + id, {
             method: "PUT",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${TOKEN}`
             },
             body: JSON.stringify(todo)
         })
@@ -169,7 +178,13 @@ function changeStatus(id) {
 }
 
 function loadTodos() {
-    return fetch(API)
+    return fetch(API, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${TOKEN}`
+            }
+        })
         .then(checkLogin)
         .then(response => response.json())
         .then(response => {

@@ -28,7 +28,7 @@ describe('GET /todos', () => {
 
     it('sollte alle Todos abrufen', async () => {
         const newTodo = {
-            "title": "Test-Todo",
+            "title": "Todo 1",
             "due": "2023-12-01T00:00:00.000Z",
             "status": 0
         };
@@ -47,7 +47,7 @@ describe('GET /todos', () => {
 describe('POST /todos', () => {
     it('sollte ein neues Todo erstellen', async () => {
         const newTodo = {
-            "title": "Übung 4 machen",
+            "title": "Todo 2",
             "due": "2022-11-12T00:00:00.000Z",
             "status": 0
         };
@@ -94,7 +94,7 @@ describe('POST /todos', () => {
 describe('GET /todos/:id', () => {
     it('sollte ein Todo abrufen', async () => {
         const newTodo = {
-            "title": "Übung 4 machen",
+            "title": "Todo 3",
             "due": "2022-11-12T00:00:00.000Z",
             "status": 0
         };
@@ -129,7 +129,7 @@ describe('GET /todos/:id', () => {
 describe('PUT /todos/:id', () => {
     it('sollte ein Todo aktualisieren', async () => {
         const newTodo = {
-            "title": "Übung 4 machen",
+            "title": "Todo 4",
             "due": "2022-11-12T00:00:00.000Z",
             "status": 0
         };
@@ -140,7 +140,7 @@ describe('PUT /todos/:id', () => {
             .send(newTodo);
 
         const updatedTodo = {
-            "title": "Übung 4 machen",
+            "title": "Todo 4",
             "due": "2022-11-12T00:00:00.000Z",
             "status": 1,
             "_id": response.body._id
@@ -174,7 +174,7 @@ describe('PUT /todos/:id', () => {
 describe('DELETE /todos/:id', () => {
     it('sollte ein Todo löschen', async () => {
         const newTodo = {
-            "title": "Übung 4 machen",
+            "title": "Todo 5",
             "due": "2022-11-12T00:00:00.000Z",
             "status": 0
         };
