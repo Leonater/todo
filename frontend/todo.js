@@ -141,7 +141,7 @@ function deleteTodo(id) {
     })
         .then(response => {
             console.log("DELETE %s: %o", API + "/" + id, response)
-            if (response.status != 204) throw ("DELETE failed")
+            if (response.status != 204) throw new Error("DELETE failed")
         })
         .then(response => {
             todos = todos.filter(t => t._id !== id)
@@ -224,7 +224,7 @@ function checkLogin(response) {
 
         // redirect to login URL with proper parameters
         window.location = LOGIN_URL + "?" + params.toString()
-        throw ("Need to log in")
+        throw new Error("Need to log in")
     }
     else return response
 }
