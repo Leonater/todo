@@ -86,7 +86,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 /** global instance of our database */
-let db = new DB();
+const db = new DB();
 
 /** Initialize database connection */
 async function initDB() {
@@ -345,14 +345,21 @@ app.delete('/todos/:id', authenticate,
     }
 );
 
-
-
 let server;
-await initDB()
-    .then(() => {
+async function startServer() {
+    try {
+        await initDB(); // Initialisiere die Datenbank
         server = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
-        })
-    })
+        });
+    } catch (error) {
+        console.error("Error initializing the server:", error);
+        process.exit(1); // Prozess beenden, wenn die Initialisierung fehlschlägt
+    }
+}
 
-export { app, server, db }
+// Starte den Server
+await startServer();
+
+// Exporte
+export { app, server, db };
