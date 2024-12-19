@@ -16,8 +16,8 @@ async function getKeycloakToken() {
             {
                 'grant_type': 'password',
                 'client_id': keycloakConfig.clientId,
-                'username': 'public',
-                'password': 'todo',
+                'username': process.env.KEYCLOAK_USER,
+                'password': process.env.KEYCLOAK_PASSWORD,
             },
             {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
