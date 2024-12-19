@@ -58,6 +58,7 @@ jobs:
         working-directory: ./frontend
 
   SonarQube-Analysis:
+    needs: Backend-Test
     runs-on: ubuntu-latest
     services:
       mongodb:
