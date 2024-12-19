@@ -74,6 +74,7 @@ const swaggerOptions = {
 
 /** Zentrales Objekt für unsere Express-Applikation */
 const app = express();
+app.disable("x-powered-by");
 
 app.use(cookieParser())
 app.use(express.static('../frontend'));
@@ -345,21 +346,18 @@ app.delete('/todos/:id', authenticate,
     }
 );
 
-let server;
-async function startServer() {
+const server = await (async () => {
     try {
         await initDB(); // Initialisiere die Datenbank
-        server = app.listen(PORT, () => {
+        const serverInstance = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
         });
+        return serverInstance; // Gib den Server zurück
     } catch (error) {
         console.error("Error initializing the server:", error);
-        process.exit(1); // Prozess beenden, wenn die Initialisierung fehlschlägt
+        process.exit(1); // Prozess beenden, falls ein Fehler auftritt
     }
-}
+})();
 
-// Starte den Server
-await startServer();
 
-// Exporte
 export { app, server, db };
