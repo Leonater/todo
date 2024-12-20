@@ -17,9 +17,6 @@ jobs:
         image: mongo:6.0
         ports:
           - 27017:27017
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,9 +37,6 @@ jobs:
         image: mongo:6.0
         ports:
           - 27017:27017
-    defaults:
-      run:
-        working-directory: ./frontend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -53,6 +47,7 @@ jobs:
 
       - name: Install frontend dependencies
         run: npm install
+        working-directory: ./frontend
       
       - name: Start Backend
         run: npm start &
@@ -60,16 +55,32 @@ jobs:
       
       - name: Run Cypress tests
         run: npm test
+        working-directory: ./frontend
 
   SonarQube-Analysis:
+    needs: Backend-Test
     runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install project dependencies
+        run: npm install
+        working-directory: ./backend
+
+      - name: Coverage
+        run: npm run coverage
+        working-directory: ./backend
+
       - name: Run SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@master
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:

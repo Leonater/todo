@@ -6,7 +6,6 @@ import swaggerJsdoc from 'swagger-jsdoc';
 
 import { check, validationResult } from 'express-validator';
 import cookieParser from 'cookie-parser';
-import { getRandomValues } from 'crypto';
 
 const PORT = process.env.PORT || 3000;
 
@@ -74,6 +73,7 @@ const swaggerOptions = {
 
 /** Zentrales Objekt für unsere Express-Applikation */
 const app = express();
+app.disable("x-powered-by");
 
 app.use(cookieParser())
 app.use(express.static('../frontend'));
@@ -86,7 +86,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 
 /** global instance of our database */
-let db = new DB();
+const db = new DB();
 
 /** Initialize database connection */
 async function initDB() {
@@ -345,14 +345,18 @@ app.delete('/todos/:id', authenticate,
     }
 );
 
-
-
-let server;
-await initDB()
-    .then(() => {
-        server = app.listen(PORT, () => {
+const server = await (async () => {
+    try {
+        await initDB(); // Initialisiere die Datenbank
+        const serverInstance = app.listen(PORT, () => {
             console.log(`Server listening on port ${PORT}`);
-        })
-    })
+        });
+        return serverInstance; // Gib den Server zurück
+    } catch (error) {
+        console.error("Error initializing the server:", error);
+        process.exit(1); // Prozess beenden, falls ein Fehler auftritt
+    }
+})();
 
-export { app, server, db }
+
+export { app, server, db };

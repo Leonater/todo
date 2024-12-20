@@ -1,7 +1,7 @@
 
 
 let todos = [];
-const status = ["offen", "in Bearbeitung", "erledigt"];
+const status_label = ["offen", "in Bearbeitung", "erledigt"];
 
 const API = "/todos"
 // const LOGIN_URL = ""
@@ -15,7 +15,7 @@ function createTodoElement(todo) {
            <div class="title">${todo.title}</div> 
            <div class="due">${due.toLocaleDateString()}</div>
            <div class="actions">
-              <button class="status" onclick="changeStatus('${todo._id}')">${status[todo.status || 0]}</button>
+              <button class="status" onclick="changeStatus('${todo._id}')">${status_label[todo.status || 0]}</button>
               <button class="edit" onclick="editTodo('${todo._id}')">Bearbeiten</button>
               <button class="delete" onclick="deleteTodo('${todo._id}')">Löschen</button>
            </div>
@@ -141,7 +141,7 @@ function deleteTodo(id) {
     })
         .then(response => {
             console.log("DELETE %s: %o", API + "/" + id, response)
-            if (response.status != 204) throw ("DELETE failed")
+            if (response.status != 204) throw new Error("DELETE failed")
         })
         .then(response => {
             todos = todos.filter(t => t._id !== id)
@@ -157,7 +157,7 @@ function changeStatus(id) {
     let todo = todos.find(t => t._id === id);
     console.log("Changing status of todo: %o", todo);
     if (todo) {
-        todo.status = (todo.status + 1) % status.length;
+        todo.status = (todo.status + 1) % status_label.length;
         fetch(API + "/" + id, {
             method: "PUT",
             headers: {
@@ -224,7 +224,7 @@ function checkLogin(response) {
 
         // redirect to login URL with proper parameters
         window.location = LOGIN_URL + "?" + params.toString()
-        throw ("Need to log in")
+        throw new Error("Need to log in")
     }
     else return response
 }

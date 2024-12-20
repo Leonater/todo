@@ -155,6 +155,22 @@ describe('PUT /todos/:id', () => {
         expect(updateResponse.body.status).toBe(updatedTodo.status);
     });
 
+    it('sollte einen 400-Fehler zurückgeben, wenn id body != id path', async () => {
+        const nonExistentId = '6452c3f8c7b4e842d90123aa';
+        const response = await request(app)
+            .put(`/todos/${nonExistentId}`)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                "_id": "",
+                "title": "Nicht existent",
+                "due": "2023-12-01T00:00:00.000Z",
+                "status": 0
+            });
+
+        expect(response.statusCode).toBe(400);
+    });
+
+
     it('sollte einen 404-Fehler zurückgeben, wenn das Todo nicht existiert', async () => {
         const nonExistentId = '6452c3f8c7b4e842d90123aa';
         const response = await request(app)
