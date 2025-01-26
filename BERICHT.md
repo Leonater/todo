@@ -48,8 +48,8 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 |Todos können nicht gelöscht werden | Datentyp der ID im Frontend korrigiert |
 |Todo wird im Frontend gelöscht, auch wenn ein Fehler im Backend aufgetreten ist | Todos erst nach Bestätigung vom Backend entfernen |
 |Status in todo.html depricated | umbenennen der liste in status_label 
-|Throw ohne object verwendet | throw new Error('Fehler') verwendet
-|Fälschlicherweise let statt const genutzt | const verwendet
+|Throw ohne object verwendet | throw new Error('Fehler') verwenden
+|Fälschlicherweise let statt const genutzt | const verwenden
 |Backend legt Versionsinformationen offen | Hinzufügen von app.disable("x-powered-by"); in index.js
 |In der todo.html HTML-Sprache nicht angegeben | \<html lang="de"> hinzugefügt
 |Sonarqube sieht jeden Kommentar mit "todo" als Arbeitsauftrag | issue als Fehltreffer markieren / Kommentar ändern
