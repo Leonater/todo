@@ -1,8 +1,8 @@
 const PORT = process.env.PORT || 3000;
 
-const today = new Date();
-const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-const containsDate = `${String(today.getMonth() + 1).padStart(2, '0')}/${String(today.getDate()).padStart(2, '0')}/${today.getFullYear()}`;
+const today = new Date()
+const inputDate = today.toISOString().split('T')[0];
+const containsDate = today.toLocaleDateString();
 
 describe('Todo', function () {
 
@@ -16,7 +16,7 @@ describe('Todo', function () {
 
     it('Fügt ein neues Todo hinzu und zeigt es an', function () {
         cy.get('#todo').type('Neue Aufgabe');
-        cy.get('#due').type(formattedDate);
+        cy.get('#due').type(inputDate);
         cy.get('#status').select('offen');
         cy.get('[type="submit"]').click();
     
@@ -27,7 +27,7 @@ describe('Todo', function () {
     });
 
     it('Zeigt eine Fehlermeldung, wenn kein Titel eingegeben wurde', function () {
-        cy.get('#due').type(formattedDate);
+        cy.get('#due').type(inputDate);
         cy.get('[type="submit"]').click();
         
         cy.get('#todo').invoke('prop', 'validationMessage').should('not.be.empty');
@@ -43,7 +43,7 @@ describe('Todo', function () {
 
     it('Ändert den Status eines Todos', function () {
         cy.get('#todo').type('Status ändern');
-        cy.get('#due').type(formattedDate);
+        cy.get('#due').type(inputDate);
         cy.get('[type="submit"]').click();
         
         cy.contains('.todo', 'Status ändern')
@@ -57,7 +57,7 @@ describe('Todo', function () {
 
     it('Löscht ein Todo', function () {
         cy.get('#todo').type('Aufgabe löschen');
-        cy.get('#due').type(formattedDate);
+        cy.get('#due').type(inputDate);
         cy.get('[type="submit"]').click();
 
         cy.contains('.todo', 'Aufgabe löschen')
