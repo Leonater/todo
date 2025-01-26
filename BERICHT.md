@@ -36,13 +36,43 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 
 
 ## Gewählte Lösungen
-- **Testfälle**: Unit-Tests mit Jest und MongoDB.
-- **CI-Pipeline**: GitHub Actions mit MongoDB-Service.
-- **SonarQube**: Konfiguration für statische Code-Analyse.
+### Unit-Tests
 
-## Probleme und Lösungsansätze
+| **Endpunkt**          | **Testbeschreibung**                                                                                 | **Erwartetes Ergebnis**                                                                                       | **HTTP-Status** |
+|-----------------------|-----------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|-----------------|
+| `GET /todos` (unautorisiert) | Gibt einen Fehler zurück, wenn kein Token bereitgestellt wird                                       | Fehlernachricht: `Unauthorized`                                                                              | `401`           |
+| `GET /todos`          | Gibt eine leere Liste zurück, wenn keine Todos vorhanden sind                                           | Leere Liste: `[]`                                                                                             | `200`           |
+| `GET /todos`          | Gibt eine Liste aller vorhandenen Todos zurück                                                          | Array mit Todos                                                                                               | `200`           |
+| `POST /todos`         | Erstellt ein neues Todo                                                                                | Gibt das erstellte Todo mit seinen Eigenschaften zurück                                                       | `201`           |
+| `POST /todos`         | Gibt einen Fehler zurück, wenn das Todo unvollständig ist                                              | Fehlernachricht                                                                                               | `400`           |
+| `POST /todos`         | Gibt einen Fehler zurück, wenn das Datum ungültig ist                                                  | Fehlernachricht                                                                                               | `400`           |
+| `GET /todos/:id`      | Ruft ein spezifisches Todo ab                                                                          | Das gewünschte Todo wird zurückgegeben                                                                        | `200`           |
+| `GET /todos/:id`      | Gibt einen Fehler zurück, wenn das Todo nicht gefunden wurde                                           | Fehlernachricht                                                                                               | `404`           |
+| `PUT /todos/:id`      | Aktualisiert ein spezifisches Todo                                                                     | Gibt das aktualisierte Todo zurück                                                                            | `200`           |
+| `PUT /todos/:id`      | Gibt einen Fehler zurück, wenn die ID im Body nicht mit der ID im Pfad übereinstimmt                   | Fehlernachricht                                                                                               | `400`           |
+| `PUT /todos/:id`      | Gibt einen Fehler zurück, wenn das Todo nicht existiert                                               | Fehlernachricht                                                                                               | `404`           |
+| `DELETE /todos/:id`   | Löscht ein spezifisches Todo                                                                           | Kein Inhalt                                                                                                   | `204`           |
+| `DELETE /todos/:id`   | Gibt einen Fehler zurück, wenn das Todo nicht existiert                                               | Fehlernachricht                                                                                               | `404`           |
 
-| Problem | Lösungen |
+
+### End2End-Tests
+
+| Testfall                                  | Beschreibung                                                                                       | Schritte                                                                                           | Erwartetes Ergebnis                                                                                                   |
+|-------------------------------------------|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| **App lädt erfolgreich**                  | Überprüft, ob die Todo-App erfolgreich geladen wird.                                              | - Besuche die URL der App: `http://localhost:<PORT>/todo.html`.                                   | Die Seite wird erfolgreich geladen.                                                                                   |
+| **Neues Todo hinzufügen und anzeigen**    | Fügt ein neues Todo hinzu und stellt sicher, dass es in der Liste angezeigt wird.                | - Fülle das Feld "Todo" mit "Neue Aufgabe". <br> - Wähle das Fälligkeitsdatum. <br> - Wähle den Status "offen". <br> - Klicke auf "Submit". | Das neue Todo wird mit dem Titel, Datum und Status in der Liste angezeigt.                                            |
+| **Fehlermeldung: Kein Titel eingegeben**  | Zeigt eine Fehlermeldung, wenn kein Titel eingegeben wurde.                                       | - Lasse das Feld "Todo" leer. <br> - Wähle ein Fälligkeitsdatum. <br> - Klicke auf "Submit".      | Es erscheint eine Fehlermeldung, die darauf hinweist, dass der Titel erforderlich ist.                                |
+| **Fehlermeldung: Datum in der Vergangenheit** | Zeigt eine Fehlermeldung, wenn ein Fälligkeitsdatum in der Vergangenheit liegt.                   | - Fülle das Feld "Todo" mit einem Titel. <br> - Gib ein Fälligkeitsdatum in der Vergangenheit ein. <br> - Klicke auf "Submit". | Es erscheint eine Fehlermeldung, die darauf hinweist, dass das Datum nicht in der Vergangenheit liegen darf.          |
+| **Status eines Todos ändern**             | Ändert den Status eines bestehenden Todos.                                                       | - Füge ein Todo hinzu. <br> - Klicke auf den Status des Todos, um ihn zu ändern.                 | Der Status des Todos ändert sich (z. B. von "offen" zu "in Bearbeitung").                                             |
+| **Todo löschen**                          | Löscht ein bestehendes Todo aus der Liste.                                                       | - Füge ein Todo hinzu. <br> - Klicke auf die Schaltfläche "Löschen" des entsprechenden Todos.     | Das Todo wird aus der Liste entfernt und ist nicht mehr sichtbar.                                                     |
+
+### Weitere Tests
+- **SonarQube**: statische Code-Analyse.
+- **CI-Pipeline**: GitHub Actions.
+
+## Fehlerbehebung
+
+| Problem | Lösung |
 | ------------- | ------------- |
 |Beim Updaten von todos werden diese nicht validiert  | In der index.js die todoValidationRules für app.put hinzugefügt |
 |Todos können nicht angelegt/geladen werden | Übertragen eines Authorization headers durch das Frontend |
@@ -57,6 +87,7 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 |Ungenutzte imports | imports entfernen
 |Formular behält bei Nutzung immer den status des letzten Todos bei | Zurücksetzen des Status auf offen
 |Beim bearbeiten eines Todos wird ein neues angelegt | die Frontend-Funktion saveTodo hat die id als falschen Datentyp abgespeichert
+|In Cypress führt die Eingabe von einem Datum zu einem Fehler | Formatierung des Datums in Cypress angepasst
 
 
 ## Ergebnisse
