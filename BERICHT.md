@@ -44,6 +44,7 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 
 | Problem | Lösungen |
 | ------------- | ------------- |
+|Beim Updaten von todos werden diese nicht validiert  | In der index.js die todoValidationRules für app.put hinzugefügt |
 |Todos können nicht angelegt/geladen werden | Übertragen eines Authorization headers durch das Frontend |
 |Todos können nicht gelöscht werden | Datentyp der ID im Frontend korrigiert |
 |Todo wird im Frontend gelöscht, auch wenn ein Fehler im Backend aufgetreten ist | Todos erst nach Bestätigung vom Backend entfernen |
