@@ -7,6 +7,12 @@ const API = "/todos"
 // const LOGIN_URL = ""
 const TOKEN = "" // dummy token
 
+document.addEventListener('DOMContentLoaded', () => {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('due').setAttribute('min', today);
+});
+
+
 function createTodoElement(todo) {
     let list = document.getElementById("todo-list");
     let due = new Date(todo.due);
@@ -34,6 +40,9 @@ function showTodos() {
     todos.forEach(todo => {
         createTodoElement(todo);
     });
+
+    // Select the first option in the status dropdown
+    document.querySelector('#status option[value="0"]').selected = true;
 }
 
 function initForm(event) {
@@ -65,7 +74,9 @@ function saveTodo(evt) {
     evt.preventDefault();
 
     // Get the id from the form. If it is not set, we are creating a new todo.
-    let _id = Number.parseInt(evt.target.dataset.id) || undefined;
+    let _id = evt.target.dataset._id || undefined;
+
+    console.log("Saving todo with id: %o", _id);
 
     let todo = {
         _id,
@@ -76,6 +87,7 @@ function saveTodo(evt) {
 
     // Save the todo
     let index = todos.findIndex(t => t._id === _id);
+    console.log("Index: %o", index);
     if (index >= 0) {
         console.log("Updating todo: %o", todo);
         fetch(API + "/" + _id, {
