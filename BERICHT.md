@@ -21,7 +21,7 @@ Bevor die Testszenarien entwickelt wurden, haben wir uns gemeinschaftlich einen 
 3. Erstellung von Unit- und End2End-Tests
 
 Der Fokus lag zunächst auf den Unit-Tests des Backends. Die bestehenden Tests, die in der Datei "/backend/todo.test.js" bereits angelegt waren, wurden zu Beginn analysiert und manuell über das Kommando 'npm test' getestet. Für die Weiterentwicklung der Unit-Tests wurden die üblichen Operationen CRUD (Create, Read, Update, Delete) zugrunde gelegt, da keine Dokumentation der Use Cases vorlag.
-Die Frontend-Tests wurden auf Basis der NodeJS Erweiterung Cypress erstellt. Die notwendige Verzeichnisstruktur '/todo/frontend/cypress/e2e' wurde vorab angelegt. Der Aufbau der Testsystematik folgt dem bereits oben beschriebenen Schema der CRUD-Operaotionen, sowie dem Test des erfolgreichen Aufrufs der Startseite.
+Die Frontend-Tests wurden auf Basis der NodeJS Erweiterung Cypress erstellt. Die notwendige Verzeichnisstruktur '/todo/frontend/cypress/e2e' wurde vorab angelegt. Der Aufbau der Testsystematik folgt dem bereits oben beschriebenen Schema der CRUD-Operationen, sowie dem Test des erfolgreichen Aufrufs der Startseite.
 
 4. Einrichten der GitHub-Action und Integration von SonarQube
 
@@ -49,7 +49,7 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 | `GET /todos/:id`      | Ruft ein spezifisches Todo ab                                                                          | Das gewünschte Todo wird zurückgegeben                                                                        | `200`           |
 | `GET /todos/:id`      | Gibt einen Fehler zurück, wenn das Todo nicht gefunden wurde                                           | Fehlernachricht                                                                                               | `404`           |
 | `PUT /todos/:id`      | Aktualisiert ein spezifisches Todo                                                                     | Gibt das aktualisierte Todo zurück                                                                            | `200`           |
-| `PUT /todos/:id`      | Gibt einen Fehler zurück, wenn die ID im Body nicht mit der ID im Pfad übereinstimmt                   | Fehlernachricht                                                                                               | `400`           |
+| `PUT /todos/:id`      | Gibt einen Fehler zurück, wenn die ID im Body nicht mit der ID im Pfad (URL) übereinstimmt                   | Fehlernachricht                                                                                               | `400`           |
 | `PUT /todos/:id`      | Gibt einen Fehler zurück, wenn das Todo nicht existiert                                               | Fehlernachricht                                                                                               | `404`           |
 | `DELETE /todos/:id`   | Löscht ein spezifisches Todo                                                                           | Kein Inhalt                                                                                                   | `204`           |
 | `DELETE /todos/:id`   | Gibt einen Fehler zurück, wenn das Todo nicht existiert                                               | Fehlernachricht                                                                                               | `404`           |
@@ -88,7 +88,8 @@ Die Github-Actions wurden so konfiguriert, dass sie sowohl auf push- als auch pu
 |Formular behält bei Nutzung immer den status des letzten Todos bei | Zurücksetzen des Status auf offen
 |Beim bearbeiten eines Todos wird ein neues angelegt | die Frontend-Funktion saveTodo hat die id als falschen Datentyp abgespeichert
 |In Cypress führt die Eingabe von einem Datum zu einem Fehler | Formatierung des Datums in Cypress angepasst
-
+|Im Frontend-Test ist die Datenbank aus Backend-Testaktivität nicht leer | Backend vor Beginn der Frontend-tests neu initialisieren 
+|Keycloak Authentifizierungsinformationen im Backend Quellcode im Klartext enthalten (utils.js) | Speichern der Daten in Umgebungsvariablen
 
 ## Ergebnisse
 - **Tests**: Erfolgreich.
